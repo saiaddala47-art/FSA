@@ -1,0 +1,27 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      routes:
+        - id: student-service
+          uri: lb://STUDENT-SERVICE
+          predicates:
+            - Path=/students/**
+    loadbalancer:
+      # We don't have Eureka/Consul, so we manually map service instances
+      # Spring Cloud LoadBalancer looks for instances provided by DiscoveryClient
+      # We can configure static list of instances using SimpleDiscoveryClient
+      ribbon:
+        enabled: false
+
+    discovery:
+      client:
+        simple:
+          instances:
+            STUDENT-SERVICE:
+              - uri: http://localhost:8081
+              - uri: http://localhost:8082
